@@ -11,6 +11,7 @@
   },
   "rules": {
     "prettier": [true, ".prettierrc.json"],
+    "no-unused-expression": false,
     "object-literal-sort-keys": false,
     "no-submodule-imports": false,
     "interface-name": false,

@@ -37,6 +37,7 @@
     "@types/chai-as-promised": "7.1.4",
     "@types/mocha": "9.0.0",
     "@types/node": "16.4.10",
+    "@types/secp256k1": "^4.0.3",
     "babel-eslint": "10.1.0",
     "chai": "4.3.4",
     "chai-as-promised": "7.1.1",
@@ -44,9 +45,11 @@
     "chai-bn": "0.3.0",
     "chai-ethers": "0.0.1",
     "dotenv": "10.0.0",
+    "eccrypto": "^1.1.6",
     "ethers": "5.5.1",
     "hardhat": "2.6.7",
     "hardhat-deploy": "0.9.4",
+    "hardhat-docgen": "^1.2.0",
     "mocha-skip-if": "0.0.3",
     "prettier": "2.4.1",
     "prettier-plugin-solidity": "1.0.0-beta.18",
@@ -66,6 +69,10 @@
     "timeout": 10000000
   },
   "dependencies": {
-    "husky": "^7.0.4"
+    "bip39": "^3.0.4",
+    "buffer": "^6.0.3",
+    "husky": "^7.0.4",
+    "secp256k1": "^4.0.2",
+    "simple-sha256": "^1.1.0"
   }
 }
