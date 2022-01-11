@@ -1,0 +1,31 @@
+contract ArtistPass {
+       function mint() {
+            // user will be able to buy a pass and mint it
+       }
+
+       function burn(tokenId) {
+           // the token will be able to be burned by NFTGallery
+       }
+
+       function withdraw() {
+           // contract owner will be able to withdraw founds from contact
+       }
+}
+
+contract NFTGallery {
+    function createArt(name, description, imageURL, passID) {
+        // create NFT art and burn artist pass nft
+    }
+
+    function createAuction(tokenID,price) {
+        // create Auction for Gallery NFT
+    }
+
+    function cancelAuction(auctionID) {
+        // cancel auction
+    }
+
+    function buyArt(auctionID) {
+        // buy art from auction
+    }
+}

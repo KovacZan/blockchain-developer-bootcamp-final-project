@@ -1,0 +1,10 @@
+{
+   "compilerOptions": {
+      "baseUrl": "./src",
+      "paths": {
+         "@app/*": ["*"],
+         "@contracts/*": ["libraries/generated/artifacts/contracts/*"],
+         "@contracts/types": ["libraries/generated/typechain-types/index.ts"],
+      }
+   }
+}

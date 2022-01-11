@@ -1,0 +1,16 @@
+{
+  "name": "blockchain-developer-bootcamp-final-project",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "yarn workspace frontend dev",
+    "build": "yarn workspace frontend build",
+    "start": "yarn workspace frontend start",
+    "compile": "yarn workspace contracts compile"
+  },
+  "workspaces":{
+    "packages": [
+      "packages/*"
+    ]
+  }
+}
