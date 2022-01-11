@@ -1,0 +1,22 @@
+enum KeyType { Authentication, Signing, Encryption }
+
+modifier onlyController {
+    // only DID owner can trigger this action
+    _;
+}
+
+function createDID() public {
+    // the user create a new DID document
+}
+
+function deleteDID() public onlyController {
+    // the user deletes the DID document
+}
+
+function addKey(byte[65] memory key, KeyType key) public onlyController {
+    // the user adds the public key to its DID document
+}
+
+function removeKey (uint index) public onlyController {
+    // the user removes the key from DID document
+}
