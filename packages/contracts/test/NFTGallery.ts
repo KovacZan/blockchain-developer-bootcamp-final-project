@@ -7,36 +7,219 @@ import { ethers, web3 } from "hardhat";
 
 chai.use(chaiEthers);
 chai.use(chaiAsPromised);
-const { expect, assert } = chai;
+const { expect } = chai;
 
 describe("NFTGallery", function () {
     let accounts: Signer[];
-    const uri = "www.placeholder.com/";
 
-    let passContract: ArtistPass;
-    let nftGallery: NFTGallery;
-    it("should", async () => {
+    let artistPassContract: ArtistPass;
+    const maxTokens = 5;
+    const price = web3.utils.toWei("50", "finney"); // 0.05 ETH
+    const uri = "https://ipfs.io/ipfs/QmeCfYm847UDEJtBgb7TtuKpCuY2qCkrtEDHX4hBH8ofMt/";
+
+    let nftGalleryContract: NFTGallery;
+
+    beforeEach(async () => {
         accounts = await ethers.getSigners();
 
-        const passFactory = (await ethers.getContractFactory("ArtistsPass", accounts[0])) as ArtistPass__factory;
-        passContract = await passFactory.deploy(10, 1, uri);
+        const artistPassFactory = (await ethers.getContractFactory("ArtistPass", accounts[0])) as ArtistPass__factory;
+        artistPassContract = await artistPassFactory.deploy(maxTokens, price, uri);
 
-        const halloweenFactory = (await ethers.getContractFactory("NFTGallery", accounts[0])) as NFTGallery__factory;
-        nftGallery = await halloweenFactory.deploy(passContract.address);
+        const nftGalleryFactory = (await ethers.getContractFactory("NFTGallery", accounts[0])) as NFTGallery__factory;
+        nftGalleryContract = await nftGalleryFactory.deploy(artistPassContract.address);
+    });
 
-        await passContract.setApprovalForAll(nftGallery.address, true);
-        // await passContract.setApprovalForAll(passContract.address, true);
+    describe("Test createArt", function () {
+        beforeEach(async () => {
+            await artistPassContract.mint({ value: price });
+        });
 
-        await passContract.mint({ value: 1 });
+        it("Should test if it cancels if not approved", async () => {
+            await expect(nftGalleryContract
+                .createArt(
+                    "Art1",
+                    "Description",
+                    "https://via.placeholder.com/150",
+                    0)).to.be.revertedWith("ArtistPass: Caller is not owner nor approved");
+        });
 
-        await nftGallery.createArt("zan", "zan", "zan", 0);
-        console.log(accounts[0].getAddress());
-        await nftGallery.createAuction(0, 10000000000000);
-        console.log("hgere");
-        // await nftGallery.setApprovalForAll(nftGallery.address, true);
+        it("Should test if it works with approved", async () => {
+            await artistPassContract.setApprovalForAll(nftGalleryContract.address, true);
+            await expect(nftGalleryContract
+                .createArt(
+                    "Art1",
+                    "Description",
+                    "https://via.placeholder.com/150",
+                    0)).to.be.fulfilled;
 
-        await nftGallery.connect(accounts[1]).buyArt(1, { value: 10000000000000 });
+            await artistPassContract.connect(accounts[1]).mint({ value: price });
+            await expect(nftGalleryContract
+                .connect(accounts[1])
+                .createArt(
+                    "Art1",
+                    "Description",
+                    "https://via.placeholder.com/150",
+                    1)).to.be.revertedWith("ArtistPass: Caller is not owner nor approved");
+        });
 
-        console.log(web3.eth.getBalance(await accounts[1].getAddress()));
+        it("Should test empty strings", async () => {
+            await expect(nftGalleryContract
+                .createArt(
+                    "",
+                    "Description",
+                    "https://via.placeholder.com/150",
+                    0)).to.be.revertedWith("NFTGallery: String is empty");
+
+            await expect(nftGalleryContract
+                .createArt(
+                    "Art1",
+                    "",
+                    "https://via.placeholder.com/150",
+                    0)).to.be.revertedWith("NFTGallery: String is empty");
+
+            await expect(nftGalleryContract
+                .createArt(
+                    "Art1",
+                    "Description",
+                    "",
+                    0)).to.be.revertedWith("NFTGallery: String is empty");
+        });
+
+        it("Should test if rejected on pause", async () => {
+            await nftGalleryContract.setPaused(true);
+            await expect(nftGalleryContract.createArt(
+                "Art1",
+                "Description",
+                "https://via.placeholder.com/150",
+                0)).to.be.revertedWith(
+                "Pausable: paused",
+            );
+        });
+
+        it("Should test that only owner can of pass can create art", async () => {
+            await expect(nftGalleryContract
+                .connect(accounts[1])
+                .createArt(
+                    "Art1",
+                    "Description",
+                    "https://via.placeholder.com/150",
+                    0)).to.be.revertedWith("NFTGallery: ArtistPass not owned by sender");
+        });
+    });
+
+    describe("Test createAuction", async () => {
+        beforeEach(async () => {
+            await artistPassContract.mint({ value: price });
+            await artistPassContract.setApprovalForAll(nftGalleryContract.address, true);
+
+            await nftGalleryContract
+                .createArt(
+                    "Art1",
+                    "Description",
+                    "https://via.placeholder.com/150",
+                    0);
+        });
+
+        it("Should test if create auction works", async () => {
+            const artPrice = web3.utils.toWei("1", "ether");
+
+            await expect(nftGalleryContract.createAuction(0, artPrice)).to.be.fulfilled;
+
+            expect(await nftGalleryContract.auctionIDCounter()).to.be.equal(1);
+
+            const auction = await nftGalleryContract.getAuction(0);
+            expect(auction.price).to.be.equal(artPrice);
+            expect(auction.artID).to.be.equal(0);
+            expect(auction.isFinished).to.be.equal(false);
+
+            expect(await nftGalleryContract.checkIfArtOnAuction(0)).to.be.equal(true);
+
+            await expect(nftGalleryContract.connect(accounts[1])
+                .createAuction(0, artPrice))
+                .to.be.revertedWith("NFTGallery: NFT Ownership required");
+
+            await expect(nftGalleryContract
+                .createAuction(0, artPrice))
+                .to.be.revertedWith("NFTGallery: Art is on Auction");
+
+            await expect(nftGalleryContract
+                .transferFrom(await accounts[0].getAddress(), await accounts[1].getAddress(),0))
+                .to.be.revertedWith("NFTGallery: Art is on Auction");
+        });
+    });
+
+    describe("Test cancelAuction", async () => {
+        beforeEach(async () => {
+            await artistPassContract.mint({ value: price });
+            await artistPassContract.setApprovalForAll(nftGalleryContract.address, true);
+
+            await nftGalleryContract
+                .createArt(
+                    "Art1",
+                    "Description",
+                    "https://via.placeholder.com/150",
+                    0);
+
+            const artPrice = web3.utils.toWei("1", "ether");
+
+            await expect(nftGalleryContract.createAuction(0, artPrice)).to.be.fulfilled;
+        });
+
+        it("Should test if cancel auction works", async () => {
+            await expect(nftGalleryContract.cancelAuction(0)).to.be.fulfilled;
+
+            const auction = await nftGalleryContract.getAuction(0);
+            expect(auction.price).to.be.equal(web3.utils.toWei("1", "ether"));
+            expect(auction.artID).to.be.equal(0);
+            expect(auction.isFinished).to.be.equal(true);
+
+            expect(await nftGalleryContract.checkIfArtOnAuction(0)).to.be.equal(false);
+
+            await expect(nftGalleryContract.cancelAuction(0))
+                .to.be.revertedWith("NFTGallery: Art is not on Auction");
+
+            await expect(nftGalleryContract
+                .transferFrom(await accounts[0].getAddress(), await accounts[1].getAddress(),0))
+                .to.be.fulfilled;
+        });
+    });
+
+    describe("Test buyArt", async () => {
+        const artPrice = web3.utils.toWei("1", "ether");
+
+        beforeEach(async () => {
+            await artistPassContract.mint({ value: price });
+            await artistPassContract.setApprovalForAll(nftGalleryContract.address, true);
+
+            await nftGalleryContract
+                .createArt(
+                    "Art1",
+                    "Description",
+                    "https://via.placeholder.com/150",
+                    0);
+
+            await expect(nftGalleryContract.createAuction(0, artPrice)).to.be.fulfilled;
+        });
+
+        it("Should test if buy art works", async () => {
+            const beforeTransfer = await accounts[0].getBalance();
+            await expect(nftGalleryContract.connect(accounts[1])
+                .buyArt(0, { value: artPrice })).to.be.fulfilled;
+
+            expect(beforeTransfer.add(artPrice)).to.be.equal(await accounts[0].getBalance());
+
+            const auction = await nftGalleryContract.getAuction(0);
+            expect(auction.price).to.be.equal(artPrice);
+            expect(auction.artID).to.be.equal(0);
+            expect(auction.isFinished).to.be.equal(true);
+
+            expect(await nftGalleryContract.checkIfArtOnAuction(0)).to.be.equal(false);
+
+            expect(await nftGalleryContract.ownerOf(0)).to.be.equal(await accounts[1].getAddress());
+
+            await expect(nftGalleryContract.connect(accounts[1])
+                .buyArt(0, { value: artPrice }))
+                .to.be.revertedWith("NFTGallery: Art is not on Auction");
+        });
     });
 });

@@ -1,11 +1,11 @@
 import { ethers } from 'ethers'
 import { Chain, Config, Kovan, Mainnet, Rinkeby, Ropsten } from '@usedapp/core'
-import { contract } from '@app/libraries/generated/contractAddress'
+import { artistPassContract } from '@app/libraries/generated/contractAddresses'
 import env from '@app/environment'
 
 export const provider = ethers.providers.getDefaultProvider(env.ETHERS_DEFAULT_PROVIDER)
 
-export const contractAddress = contract
+export const contractAddress = artistPassContract
 
 export const network: Chain = (() => {
   switch (env.CHAIN_ID) {

@@ -5,6 +5,7 @@ import "dotenv/config";
 import "hardhat-gas-reporter";
 import "@nomiclabs/hardhat-solhint";
 import "@typechain/hardhat";
+import "@nomiclabs/hardhat-web3";
 
 import { HardhatUserConfig } from "hardhat/types";
 
@@ -12,11 +13,20 @@ import "./tasks/utils/accounts";
 import "./tasks/utils/balance";
 import "./tasks/utils/block-number";
 
-import "./tasks/deployments/deploy";
+import "./tasks/deployments/full-deploy";
+import "./tasks/deployments/deploy-artist-pass";
+import "./tasks/deployments/deploy-nft-gallery";
+import "./tasks/deployments/deploy-multicall";
 import "./tasks/deployments/compile";
 import "./tasks/deployments/clean";
 
-import "./tasks/operational/mint";
+import "./tasks/operational/ArtistPass/mint";
+import "./tasks/operational/ArtistPass/set-approval";
+
+import "./tasks/operational/NFTGallery/create-art";
+import "./tasks/operational/NFTGallery/create-auction";
+import "./tasks/operational/NFTGallery/cancel-auction";
+import "./tasks/operational/NFTGallery/buy-art";
 
 const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL || "https://eth-mainnet.alchemyapi.io/v2/your-api-key";
 const RINKEBY_RPC_URL = process.env.RINKEBY_RPC_URL || "https://eth-rinkeby.alchemyapi.io/v2/your-api-key";
@@ -29,17 +39,11 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const COIN_MARKET_CAP = process.env.COIN_MARKET_CAP;
 
 const config: HardhatUserConfig = {
-    defaultNetwork: "hardhat",
+    defaultNetwork: "localhost",
     networks: {
         mainnet: {
             url: MAINNET_RPC_URL,
             accounts: PRIVATE_KEY ? [PRIVATE_KEY] : { mnemonic: MNEMONIC },
-        },
-        hardhat: {
-            // // If you want to do some forking, uncomment this
-            // forking: {
-            //   url: MAINNET_RPC_URL
-            // }
         },
         localhost: {
             url: "http://127.0.0.1:8545",
