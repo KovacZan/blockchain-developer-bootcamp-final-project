@@ -18,6 +18,6 @@ export const network: Chain = (() => {
 })()
 
 export const dAppConfig: Config = {
-  networks: [ network ],
+  networks: [ network ]
 }
 
