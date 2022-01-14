@@ -8,22 +8,25 @@ task("full-deploy", "Deploy all contracts in this repository")
     .addOptionalParam<number>("price", "The price of the ArtistPass NFT (default will be set to 0.05ETH")
     .addOptionalParam<string>("url", "URL for ArtistPass Metadata")
     .addFlag("save", "Save the address to the frontend")
-    .setAction(async (taskArgs, {web3, config, run, ethers}) => {
+    .setAction(async (taskArgs, {web3, config, run, ethers, network}) => {
         await run("compile");
 
         console.log("Start Deploying all contracts!");
 
         console.log("Deploy Multicall contract!");
-        const multicallFactory = await ethers.getContractFactory("Multicall") as Multicall__factory;
-        const multicallContract = await multicallFactory.deploy();
-        await multicallContract.deployed();
-        console.log("Multicall Address: ", multicallContract.address);
-        console.log("Multicall Transaction: ", multicallContract.deployTransaction.hash);
+        let multicallContract;
+        if (network.name === "localhost") {
+            const multicallFactory = await ethers.getContractFactory("Multicall") as Multicall__factory;
+            multicallContract = await multicallFactory.deploy();
+            await multicallContract.deployed();
+            console.log("Multicall Address: ", multicallContract.address);
+            console.log("Multicall Transaction: ", multicallContract.deployTransaction.hash);
+        }
 
         console.log("Deploying ArtistPass contract!");
         const maxTokens = taskArgs.maxtokens || 10;
         const price = taskArgs.price || web3.utils.toWei("50", "finney");
-        const url = taskArgs.url || "some-url";
+        const url = taskArgs.url || "https://gateway.pinata.cloud/ipfs/QmXzKi2F5L1Wvf35ePXGYxrYaS3kfHssbpQGzSiSPpxVAd/";
 
         const artistPassFactory = await ethers.getContractFactory("ArtistPass") as ArtistPass__factory;
         const artistPassContract = await artistPassFactory.deploy(maxTokens, price, url);
@@ -44,10 +47,12 @@ task("full-deploy", "Deploy all contracts in this repository")
             fs.removeSync(`${config.paths.root}/../frontend/src/libraries/generated/contractAddresses.ts`);
             fs.removeSync(`${config.paths.root}/../frontend/src/libraries/generated/multicallAddress.ts`);
 
-            fs.appendFileSync(
-                `${config.paths.root}/../frontend/src/libraries/generated/multicallAddress.ts`,
-                `export const multicallAddress = '${multicallContract.address}'\n`,
-            );
+            if (network.name === "localhost" && multicallContract) {
+                fs.appendFileSync(
+                    `${config.paths.root}/../frontend/src/libraries/generated/multicallAddress.ts`,
+                    `export const multicallAddress = '${multicallContract.address}'\n`,
+                );
+            }
             fs.appendFileSync(
                 `${config.paths.root}/../frontend/src/libraries/generated/contractAddresses.ts`,
                 // eslint-disable-next-line max-len

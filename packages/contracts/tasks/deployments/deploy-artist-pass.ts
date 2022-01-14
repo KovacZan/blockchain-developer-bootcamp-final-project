@@ -11,7 +11,7 @@ task("deploy-artist-pass", "Deploy ArtistPass contract")
 
         const maxTokens = taskArgs.maxtokens || 10;
         const price = taskArgs.price || web3.utils.toWei("50", "finney");
-        const url = taskArgs.url || "some-url";
+        const url = taskArgs.url || "https://gateway.pinata.cloud/ipfs/QmXzKi2F5L1Wvf35ePXGYxrYaS3kfHssbpQGzSiSPpxVAd/";
 
         console.log("Deploying ArtistPass contract!");
         const contractFactory = await ethers.getContractFactory("ArtistPass") as ArtistPass__factory;
