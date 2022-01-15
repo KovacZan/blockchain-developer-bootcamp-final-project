@@ -12,8 +12,10 @@
     "lint:sol": "solhint 'contracts/**/*.sol' && prettier -c 'contracts/**/*.sol'",
     "lint:sol:fix": "prettier --write \"contracts/**/*.sol\"",
     "compile": "TS_NODE_TRANSPILE_ONLY=1 hardhat typechain",
+    "clean": "hardhat clean",
     "chain": "hardhat node",
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "deploy": "hardhat full-deploy --network ropsten"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.3",

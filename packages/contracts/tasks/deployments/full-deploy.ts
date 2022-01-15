@@ -13,9 +13,9 @@ task("full-deploy", "Deploy all contracts in this repository")
 
         console.log("Start Deploying all contracts!");
 
-        console.log("Deploy Multicall contract!");
         let multicallContract;
         if (network.name === "localhost") {
+            console.log("Deploy Multicall contract!");
             const multicallFactory = await ethers.getContractFactory("Multicall") as Multicall__factory;
             multicallContract = await multicallFactory.deploy();
             await multicallContract.deployed();
@@ -45,9 +45,8 @@ task("full-deploy", "Deploy all contracts in this repository")
         if (taskArgs.save) {
             console.log("Saving addresses to frontend files!");
             fs.removeSync(`${config.paths.root}/../frontend/src/libraries/generated/contractAddresses.ts`);
-            fs.removeSync(`${config.paths.root}/../frontend/src/libraries/generated/multicallAddress.ts`);
-
             if (network.name === "localhost" && multicallContract) {
+                fs.removeSync(`${config.paths.root}/../frontend/src/libraries/generated/multicallAddress.ts`);
                 fs.appendFileSync(
                     `${config.paths.root}/../frontend/src/libraries/generated/multicallAddress.ts`,
                     `export const multicallAddress = '${multicallContract.address}'\n`,
