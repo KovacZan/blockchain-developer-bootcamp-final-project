@@ -23,7 +23,7 @@ export const ArtistPasses = () => {
           const tokens = await passContract.connect(library.getSigner()).tokensOfOwner(account)
           for (const token of tokens) {
             const uri = await passContract.connect(library.getSigner()).tokenURI(token)
-            stateTokens.push({ id: token.toNumber(), uri: uri.concat(".png") })
+            stateTokens.push({ id: token.toNumber(), uri: uri.concat('.png') })
           }
           setPasses(stateTokens)
         }

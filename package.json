@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "yarn workspace frontend dev",
     "build": "yarn workspace frontend build",
     "start": "yarn workspace frontend start",
-    "compile": "yarn workspace contracts compile"
+    "compile": "yarn workspace contracts compile",
+    "test": "yarn workspace contracts test",
+    "chain": "yarn workspace contracts chain"
   },
   "workspaces":{
     "packages": [
