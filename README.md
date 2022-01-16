@@ -105,10 +105,16 @@ yarn test
 
 ## Screen Recording Link
 
+https://www.youtube.com/watch?v=0KijWzEceaQ
+
 ## Deployed Contract Links
 
 ArtistPass: https://rinkeby.etherscan.io/address/0x7Db0f41902A9a590A1D36C410A919f4352A5b0D0
 NFTGallery: https://rinkeby.etherscan.io/address/0x19102249B6a94E83A881678AF3ab4001fCC65Ff8
+
+## Website link
+
+https://blockchain-developer-bootcamp-final-project-dyzehf6dk-kovaczan.vercel.app/
 
 ## Certification Address
 My address for certification:
