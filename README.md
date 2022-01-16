@@ -49,7 +49,7 @@ this is protected with ReentrancyGuard
 
 1. Clone the repository
 ```
-git clone https://github.com/kovaczan/blockchain-developer-bootcamp-final-project
+git clone https://github.com/KovacZan/blockchain-developer-bootcamp-final-project.git
 ```
 2. Install dependencies
 ```
@@ -68,7 +68,7 @@ yarn start
 
 1. Clone the repository
 ```
-git clone https://github.com/kovaczan/blockchain-developer-bootcamp-final-project
+git clone https://github.com/KovacZan/blockchain-developer-bootcamp-final-project.git
 ```
 2. Install dependencies
 ```
@@ -106,6 +106,9 @@ yarn test
 ## Screen Recording Link
 
 ## Deployed Contract Links
+
+ArtistPass: https://rinkeby.etherscan.io/address/0x7Db0f41902A9a590A1D36C410A919f4352A5b0D0
+NFTGallery: https://rinkeby.etherscan.io/address/0x19102249B6a94E83A881678AF3ab4001fCC65Ff8
 
 ## Certification Address
 My address for certification:

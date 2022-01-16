@@ -1,2 +1,2 @@
-export const artistPassContract = '0xB30CdE087f9Aec21d4af03EfBa66995A6C1C1cb6'
-export const nftGalleryContract = '0x039f3FE0549B7d1C2E3f7396DeF43B7F9f66db91'
+export const artistPassContract = '0x7Db0f41902A9a590A1D36C410A919f4352A5b0D0'
+export const nftGalleryContract = '0x19102249B6a94E83A881678AF3ab4001fCC65Ff8'
