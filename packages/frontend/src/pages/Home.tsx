@@ -7,11 +7,13 @@ import ArtistPass from '@contracts/ArtistPass.sol/ArtistPass.json'
 import { ArtistPass as ArtistPassContract } from 'contracts/typechain-types'
 import { formatEther } from '@ethersproject/units'
 import { Spinner } from '@chakra-ui/react'
+
 export const Home = () => {
   const { active, error, library } = useEthers()
   const [ price, setPrice ] = useState('')
   const [ isLoading, setIsLoading ] = useState(false)
   const [ transaction, setTransaction ] = useState('')
+  const [ status, setStatus ] = useState('')
 
   const getPrice = async () => {
     try {
@@ -41,9 +43,19 @@ export const Home = () => {
         const trx = await passContract.connect(library.getSigner()).mint({ value: p })
         setTransaction(network.getExplorerTransactionLink(trx.hash))
         setIsLoading(false)
+        setStatus('Wait for 2 block confirmation')
+        try {
+          await trx.wait(2)
+          setStatus('Transaction has been confirmed')
+        } catch {
+          setStatus('Something went wrong with transaction')
+        }
+
+
       } catch (err) {
         console.log('Error: ', err)
         setIsLoading(false)
+        setStatus('Something went wrong with transaction')
       }
     }
   }
@@ -91,6 +103,8 @@ export const Home = () => {
           {isLoading && <Spinner />}
           <a target="_blank" rel="noopener noreferrer" href={transaction}>{transaction}</a>
         </div>
+        <br/>
+        <p>{status}</p>
       </Center>
     </>
   )
