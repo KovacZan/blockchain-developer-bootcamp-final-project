@@ -105,7 +105,7 @@ yarn test
 
 ## Screen Recording Link
 
-https://www.youtube.com/watch?v=0KijWzEceaQ
+https://www.youtube.com/watch?v=25ePuSDroAw
 
 ## Deployed Contract Links
 
@@ -114,7 +114,7 @@ NFTGallery: https://rinkeby.etherscan.io/address/0x19102249B6a94E83A881678AF3ab4
 
 ## Website link
 
-https://blockchain-developer-bootcamp-final-project-dyzehf6dk-kovaczan.vercel.app/
+https://blockchain-developer-bootcamp-final-project-theta.vercel.app/
 
 ## Certification Address
 My address for certification:
