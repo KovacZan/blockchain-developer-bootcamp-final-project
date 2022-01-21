@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useEthers } from '@usedapp/core'
-import { Alert, AlertIcon, Button, Center } from '@chakra-ui/react'
+import { Alert, AlertIcon, Button, Center, Stack, Text } from '@chakra-ui/react'
 import { ethers } from 'ethers'
 import { contractAddress, network, provider } from '@app/libraries/connectors'
 import ArtistPass from '@contracts/ArtistPass.sol/ArtistPass.json'
@@ -103,8 +103,9 @@ export const Home = () => {
           {isLoading && <Spinner />}
           <a target="_blank" rel="noopener noreferrer" href={transaction}>{transaction}</a>
         </div>
-        <br/>
-        <p>{status}</p>
+        <Stack mt={20}>
+          <Text>{status}</Text>
+        </Stack>
       </Center>
     </>
   )
